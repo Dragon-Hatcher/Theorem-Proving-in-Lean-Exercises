@@ -8,13 +8,37 @@ import data.real.basic
 
 variables (α : Type*) (p q : α → Prop)
 
-example : (∀ x, p x ∧ q x) ↔ (∀ x, p x) ∧ (∀ x, q x) := sorry
-example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) := sorry
-example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x := sorry
+example : (∀ x, p x ∧ q x) ↔ (∀ x, p x) ∧ (∀ x, q x) := 
+  iff.intro
+    (assume h,
+     and.intro
+      (assume a, (h a).left)
+      (assume a, (h a).right))
+    (assume h,
+     assume a,
+     have hpa : p a := h.left a,
+     have hqa : q a := h.right a,
+     ⟨hpa, hqa⟩)
+example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) := 
+  assume h₁,
+  assume h₂,
+  assume a,
+  h₁ a (h₂ a)
+example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x := 
+  assume h,
+  assume a,
+  or.elim h
+    (assume hp, or.inl (hp a))
+    (assume hq, or.inr (hq a))
 
 /-
 You should also try to understand why the reverse implication is not derivable in 
 the last example.
+-/
+
+/-
+It could be that e.g. p x for half of x and q x for the other half whereas the
+condition requires that it is 100% one way or the other
 -/
 
 /-
